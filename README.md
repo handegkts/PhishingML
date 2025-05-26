@@ -51,7 +51,7 @@ Projede kullanılan örnek veri setleri `instances/sample_datasets` dizini altı
    - Dosya: instances/sample_datasets/email_phishing_dataset.csv
 
 2. **Web Page Phishing Dataset**
-   - Kaynak: [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/967/phiusiil%2Bphishing%2Burl%2Bdataset)
+   - Kaynak: [Kaggle](https://www.kaggle.com/datasets/danielfernandon/web-page-phishing-dataset)
    - Kayıt Sayısı: 100,077
    - Dosya: instances/sample_datasets/web_page_phishing_dataset.csv
 
