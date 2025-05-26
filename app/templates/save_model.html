@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+
+{% block title %}Model Kaydetme - PhishingML{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-4 border-light">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-save-fill me-2"></i>Eğitim Sonuçları</h6>
+            </div>
+            <div class="card-body">
+                {% if results and results|length > 0 %}
+                {% set first_result = results[0] %}
+                <!-- Tablo yerine Model Detayları benzeri kart yapısı -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="model-info-card border rounded p-3 h-100">
+                            <h6 class="border-bottom pb-2 mb-3 text-primary"><i class="bi bi-card-list me-2"></i>Genel Bilgiler</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th class="w-40">Model Tipi:</th>
+                                    <td class="text-dark">
+                                        <div class="d-flex align-items-center">
+                                            <i class="{{ first_result.icon_class }} me-2"></i>
+                                            <span>{{ first_result.model_type.replace('_', ' ').title() }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Veri Seti:</th>
+                                    <td class="text-dark">{{ first_result.dataset_name }}</td>
+                                </tr>
+                                {% if first_result.dataset_hash %}
+                                <tr>
+                                    <th>Veri Seti Hash:</th>
+                                    <td class="text-dark text-break" style="word-wrap: break-word; max-width: 200px; font-family: monospace; font-size: 0.8rem;">{{ first_result.dataset_hash }}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <th>Model Dosyası:</th>
+                                    <td class="text-dark text-break" style="word-wrap: break-word; max-width: 200px;">{{ first_result.model_path.split('/')[-1] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Eğitim Tarihi:</th>
+                                    <td class="text-dark">{{ first_result.formatted_date }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="model-info-card border rounded p-3 h-100">
+                            <h6 class="border-bottom pb-2 mb-3 text-primary"><i class="bi bi-pie-chart-fill me-2"></i>Veri Dağılımı</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th class="w-40">Veri Seti Boyutu:</th>
+                                    <td class="text-dark">{{ first_result.train_samples_count + first_result.test_samples_count }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Eğitim Veri Sayısı:</th>
+                                    <td class="text-dark">
+                                        <button type="button" class="btn btn-sm btn-outline-info view-data-btn" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#dataPreviewModal_save"
+                                                data-modal-title="Eğitim Verileri ({{ first_result.train_samples_count }} örnek)"
+                                                data-table-id-base="trainDataTable"
+                                                data-json-data='{{ first_result.train_data_json|safe }}'
+                                                title="Eğitim Verileri">
+                                            <i class="bi bi-database-fill me-1"></i>{{ first_result.train_samples_count }}
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Test Veri Sayısı:</th>
+                                    <td class="text-dark">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary view-data-btn" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#dataPreviewModal_save"
+                                                data-modal-title="Test Verileri ({{ first_result.test_samples_count }} örnek)"
+                                                data-table-id-base="testDataTable"
+                                                data-json-data='{{ first_result.test_data_json|safe }}'
+                                                title="Test Verileri">
+                                            <i class="bi bi-database me-1"></i>{{ first_result.test_samples_count }}
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Eğitim/Test Oranı:</th>
+                                    <td class="text-dark">{{ (first_result.train_samples_count / (first_result.train_samples_count + first_result.test_samples_count) * 100)|round(1) }}% / {{ (first_result.test_samples_count / (first_result.train_samples_count + first_result.test_samples_count) * 100)|round(1) }}%</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="model-info-card border rounded p-3">
+                            <h6 class="border-bottom pb-2 mb-3 text-primary"><i class="bi bi-bar-chart-fill me-2"></i>Performans Metrikleri</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th class="w-40">Doğruluk (Accuracy):</th>
+                                            <td class="text-dark">{{ "%.2f"|format(first_result.accuracy) }}%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Kesinlik (Precision):</th>
+                                            <td class="text-dark">{{ "%.2f"|format(first_result.precision) }}%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Duyarlılık (Recall):</th>
+                                            <td class="text-dark">{{ "%.2f"|format(first_result.recall) }}%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>F1 Skoru:</th>
+                                            <td class="text-dark">{{ "%.2f"|format(first_result.f1_score) }}%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Eğitim Süresi:</th>
+                                            <td class="text-dark">{{ "%.2f"|format(first_result.training_time) }} saniye</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="metrics-info p-3 bg-light rounded">
+                                        <h6 class="mb-2 text-dark"><i class="bi bi-info-circle me-1"></i>Metrik Açıklamaları</h6>
+                                        <ul class="small text-muted mb-0 ps-3">
+                                            <li><strong>Doğruluk:</strong> Doğru tahmin edilen örneklerin tüm örneklere oranı</li>
+                                            <li><strong>Kesinlik:</strong> Phishing olarak tahmin edilenlerin gerçekten phishing olma oranı</li>
+                                            <li><strong>Duyarlılık:</strong> Gerçek phishing sitelerinin tespit edilme oranı</li>
+                                            <li><strong>F1 Skoru:</strong> Kesinlik ve duyarlılığın harmonik ortalaması</li>
+                                            <li><strong>Eğitim Süresi:</strong> Modelin eğitim süresi (saniye)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Model Ayarları Kartı -->
+                {% if first_result.model_params %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="model-info-card border rounded p-3">
+                            <h6 class="border-bottom pb-2 mb-3 text-primary"><i class="bi bi-sliders me-2"></i>Model Ayarları</h6>
+                <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead class="table-light">
+                            <tr>
+                                            <th>Parametre</th>
+                                            <th>Değer</th>
+                                            <th>Açıklama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                        <!-- Random Seed (tüm model tipleri için ortak) -->
+                            <tr>
+                                            <td class="fw-medium">Random Seed</td>
+                                            <td class="text-dark">{{ first_result.model_params.get('random_seed', '42') }}</td>
+                                            <td class="text-muted small">Model eğitimindeki rastgeleliği kontrol eden değer</td>
+                                        </tr>
+                                        
+                                        {% if first_result.model_type == 'random_forest' %}
+                                            <tr>
+                                                <td class="fw-medium">n_estimators</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('n_estimators', 100) }}</td>
+                                                <td class="text-muted small">Toplulukta kullanılan ağaç sayısı</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">max_depth</td>
+                                                <td class="text-dark">
+                                                    {% if first_result.model_params.get('max_depth') == None %}
+                                                        Sınırsız
+                                                    {% else %}
+                                                        {{ first_result.model_params.get('max_depth') }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-muted small">Ağaçların maksimum derinliği</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">min_samples_split</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('min_samples_split', 2) }}</td>
+                                                <td class="text-muted small">Bir düğümü bölmek için gereken minimum örnek sayısı</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">criterion</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('criterion', 'gini') }}</td>
+                                                <td class="text-muted small">Bölme kalitesini ölçme yöntemi</td>
+                                            </tr>
+                                        {% elif first_result.model_type == 'svm' %}
+                                            <tr>
+                                                <td class="fw-medium">C</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('C', 1.0) }}</td>
+                                                <td class="text-muted small">Düzenleme parametresi (küçük değerler = daha yumuşak sınır)</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">kernel</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('kernel', 'rbf') }}</td>
+                                                <td class="text-muted small">Çekirdek fonksiyonu türü</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">gamma</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('gamma', 'scale') }}</td>
+                                                <td class="text-muted small">Rbf, poly ve sigmoid çekirdek fonksiyonları için çekirdek katsayısı</td>
+                                            </tr>
+                                        {% elif first_result.model_type == 'decision_tree' %}
+                                            <tr>
+                                                <td class="fw-medium">max_depth</td>
+                                                <td class="text-dark">
+                                                    {% if first_result.model_params.get('max_depth') == None %}
+                                                        Sınırsız
+                                                    {% else %}
+                                                        {{ first_result.model_params.get('max_depth') }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-muted small">Ağacın maksimum derinliği</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">min_samples_split</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('min_samples_split', 2) }}</td>
+                                                <td class="text-muted small">Bir düğümü bölmek için gereken minimum örnek sayısı</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">criterion</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('criterion', 'gini') }}</td>
+                                                <td class="text-muted small">Bölme kalitesini ölçme yöntemi</td>
+                                            </tr>
+                                        {% elif first_result.model_type == 'naive_bayes' %}
+                                            <tr>
+                                                <td class="fw-medium">var_smoothing</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('var_smoothing', '1e-9') }}</td>
+                                                <td class="text-muted small">Varyansa eklenen stabilite sabiti</td>
+                                            </tr>
+                                        {% elif first_result.model_type == 'knn' %}
+                                            <tr>
+                                                <td class="fw-medium">n_neighbors</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('n_neighbors', 5) }}</td>
+                                                <td class="text-muted small">Sınıflandırma için kullanılacak komşu sayısı</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">weights</td>
+                                                <td class="text-dark">
+                                                    {% if first_result.model_params.get('weights') == 'uniform' %}
+                                                        Eşit ağırlık
+                                    {% else %}
+                                                        {{ first_result.model_params.get('weights', 'uniform') }}
+                                    {% endif %}
+                                </td>
+                                                <td class="text-muted small">Komşuların oy ağırlığı</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">metric</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('metric', 'minkowski') }}</td>
+                                                <td class="text-muted small">Mesafe ölçüm yöntemi</td>
+                                            </tr>
+                                        {% elif first_result.model_type == 'xgboost' %}
+                                            <tr>
+                                                <td class="fw-medium">n_estimators</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('n_estimators', 100) }}</td>
+                                                <td class="text-muted small">Toplulukta kullanılan ağaç sayısı</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">max_depth</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('max_depth', 6) }}</td>
+                                                <td class="text-muted small">Ağaçların maksimum derinliği</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-medium">learning_rate</td>
+                                                <td class="text-dark">{{ first_result.model_params.get('learning_rate', 0.3) }}</td>
+                                                <td class="text-muted small">Öğrenme hızı</td>
+                                            </tr>
+                                        {% endif %}
+                                        
+                                        <!-- Veri bölünme yüzdesi -->
+                                        <tr>
+                                            <td class="fw-medium">Eğitim/Test Oranı</td>
+                                            <td class="text-dark">{{ first_result.model_params.get('train_test_split', 80)|int }}% / {{ 100 - first_result.model_params.get('train_test_split', 80)|int }}%</td>
+                                            <td class="text-muted small">Veri setinin eğitim ve test için bölünme oranı</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Form kısmı korundu -->
+                <div class="card border-0 p-3 mt-3">
+                    <div class="card-body p-0">
+                        <!-- routes.py ve app.py dosyalarındaki iki farklı endpoint ile uyumluluk için iki submit formu oluşturuldu -->
+                        <form method="POST" action="{{ url_for('phishing.train') }}" id="saveModelForm">
+                            <input type="hidden" name="save_model" value="true">
+                            <input type="hidden" name="model_type" value="{{ first_result.model_type }}">
+                            <input type="hidden" name="dataset_name" value="{{ first_result.dataset_name }}">
+                            <input type="hidden" name="accuracy" value="{{ first_result.accuracy }}">
+                            <input type="hidden" name="precision" value="{{ first_result.precision }}">
+                            <input type="hidden" name="recall" value="{{ first_result.recall }}">
+                            <input type="hidden" name="f1_score" value="{{ first_result.f1_score }}">
+                            <input type="hidden" name="training_time" value="{{ first_result.training_time }}">
+                            <input type="hidden" name="model_path" value="{{ first_result.model_path }}">
+                            <input type="hidden" name="train_samples_count" value="{{ first_result.train_samples_count }}">
+                            <input type="hidden" name="test_samples_count" value="{{ first_result.test_samples_count }}">
+                            <input type="hidden" name="train_data_json" value="{{ first_result.train_data_json|escape|safe }}">
+                            <input type="hidden" name="test_data_json" value="{{ first_result.test_data_json|escape|safe }}">
+                            {% if first_result.model_params %}
+                            <input type="hidden" name="model_params" value="{{ first_result.model_params|tojson|escape }}">
+                            {% endif %}
+                            {% if first_result.dataset_hash %}
+                            <input type="hidden" name="dataset_hash" value="{{ first_result.dataset_hash }}">
+                            {% endif %}
+                            <!-- Session değişkenlerini hem training_results hem de last_result_for_save olarak saklayabilmek için -->
+                            <input type="hidden" name="save_to_sessions" value="true">
+                            
+                            <div class="row align-items-end">
+                                <div class="col-md-6">
+                                    <div class="mb-0">
+                                        <label for="model_name" class="form-label">Eğitim Adı <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="model_name" name="model_name" 
+                                               value="{{ model_name_display_input | default('') }}" 
+                                               placeholder="Eğitimi kaydetmek için bir isim verin" aria-describedby="modelNameHelp">
+                                        <div class="form-text mt-1 mb-1" id="modelNameHelp">Lütfen mevcut eğitimlerden farklı, benzersiz bir isim girin.</div>
+                                        <div id="nameError" class="text-danger mt-1" style="display: none;">
+                                            <small><i class="bi bi-exclamation-triangle-fill me-1"></i>Bu isim zaten kullanılıyor!</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-end align-items-center h-100">
+                                        <button type="button" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#trainingLogsModal">
+                                            <i class="bi bi-terminal me-1"></i>Logları Görüntüle
+                                        </button>
+                                        <button type="submit" name="save_decision" value="no" class="btn btn-outline-secondary me-2">
+                                            <i class="bi bi-x-circle-fill me-1"></i>Reddet
+                                        </button>
+                                        <button type="submit" name="save_decision" value="yes" class="btn btn-success" onclick="return validateForm()">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Kaydet
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Eğitim sonuçları bulunamadı.
+                </div>
+                <div class="text-center">
+                    <a href="{{ url_for('phishing.train') }}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left-circle-fill me-1"></i>Eğitim Sayfasına Dön
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Eğitim ve Test Logları Modalı -->
+{% if first_result and first_result.training_logs %}
+<div class="modal fade" id="trainingLogsModal" tabindex="-1" aria-labelledby="trainingLogsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white py-3 border-bottom border-secondary">
+                <h6 class="modal-title m-0 font-weight-bold" id="trainingLogsModalLabel"><i class="bi bi-terminal-fill me-2"></i>Loglar</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body bg-dark text-white" style="font-family: monospace; font-size: 0.85rem;">
+                {% for log_entry in first_result.training_logs %}
+                    <div>{{ log_entry }}</div>
+                {% endfor %}
+            </div>
+            <div class="modal-footer bg-dark border-top border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Genel Veri Önizleme Modalı -->
+<div class="modal fade" id="dataPreviewModal_save" tabindex="-1" aria-labelledby="dataPreviewModalLabel_save" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="dataPreviewModalLabel_save">
+                    <i class="bi bi-table me-1"></i> Veri Önizleme
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small">En fazla 10 örnek gösterilmektedir.</p>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-sm" id="previewDataTable_save">
+                        <thead class="table-light">
+                            <tr id="previewDataHeader_save">
+                                <!-- JS ile doldurulacak -->
+                            </tr>
+                        </thead>
+                        <tbody id="previewDataBody_save">
+                            <!-- JS ile doldurulacak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mevcut eğitim adlarını (kaydedilmiş olanları) bir JavaScript dizisine aktaralım
+    const existingModelNames = JSON.parse('{{ trained_models_json|default("[]")|safe }}');
+    
+    const saveModelForm = document.getElementById('saveModelForm');
+    if (saveModelForm) {
+        const modelNameInput = document.getElementById('model_name');
+        const nameError = document.getElementById('nameError');
+
+        // Form doğrulama fonksiyonu (Global scope'da değil, sadece bu form için)
+        window.validateForm = function() { // Fonksiyonu window'a atayarak global yapıyoruz ki onclick bulabilsin
+            const modelName = modelNameInput.value;
+            
+            if (!modelName || modelName.trim() === '') {
+                flashModal('Eğitim adı boş olamaz!', 'danger');
+                modelNameInput.focus();
+                return false;
+            }
+            
+            if (existingModelNames.includes(modelName.trim())) {
+                nameError.style.display = 'block';
+                modelNameInput.focus();
+                return false;
+            }
+            
+            nameError.style.display = 'none';
+            return true;
+        };
+        
+        if (modelNameInput) {
+            modelNameInput.addEventListener('input', function() {
+                nameError.style.display = 'none';
+            });
+        }
+    }
+            
+    // Veri gösterme butonları için event listener
+    const viewDataButtons = document.querySelectorAll('.view-data-btn');
+    const dataPreviewModalElement = document.getElementById('dataPreviewModal_save');
+    const dataPreviewModal = dataPreviewModalElement ? new bootstrap.Modal(dataPreviewModalElement) : null;
+    
+    viewDataButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (!dataPreviewModal) return;
+
+            const modalTitle = this.dataset.modalTitle;
+            const jsonDataString = this.dataset.jsonData;
+            
+            const modalTitleElement = dataPreviewModalElement.querySelector('.modal-title');
+            const tableHeaderElement = dataPreviewModalElement.querySelector('#previewDataHeader_save');
+            const tableBodyElement = dataPreviewModalElement.querySelector('#previewDataBody_save');
+            
+            // Modal başlığını ayarla
+            if (modalTitleElement) {
+                modalTitleElement.innerHTML = `<i class="bi bi-table me-1"></i> ${modalTitle}`;
+    }
+    
+            // Tabloyu temizle
+            if (tableHeaderElement) tableHeaderElement.innerHTML = '';
+            if (tableBodyElement) tableBodyElement.innerHTML = '';
+            
+            // Veriyi parse et
+            try {
+                const jsonData = JSON.parse(jsonDataString);
+        
+                if (jsonData && jsonData.length > 0) {
+            // Başlık satırını oluştur
+                    const headerRow = document.createElement('tr');
+                    const headerColumns = Object.keys(jsonData[0]);
+            
+                    headerColumns.forEach(column => {
+                const th = document.createElement('th');
+                        th.textContent = column;
+                        headerRow.appendChild(th);
+            });
+                    
+                    tableHeaderElement.appendChild(headerRow);
+            
+            // Veri satırlarını oluştur
+                    jsonData.forEach(rowData => {
+                const row = document.createElement('tr');
+                        
+                        headerColumns.forEach(column => {
+                    const td = document.createElement('td');
+                            td.textContent = rowData[column];
+                    row.appendChild(td);
+                });
+                        
+                        tableBodyElement.appendChild(row);
+            });
+        } else {
+                    tableBodyElement.innerHTML = '<tr><td colspan="100%" class="text-center">Veri bulunamadı</td></tr>';
+        }
+    } catch (error) {
+                console.error('JSON verisi işlenirken hata oluştu:', error);
+                tableBodyElement.innerHTML = '<tr><td colspan="100%" class="text-center">Veri yüklenirken hata oluştu</td></tr>';
+            }
+        });
+    });
+    
+    // Modal'ı dinamik olarak oluşturulan bootstrap.Modal nesnesi ile daha güvenli gösterelim
+    function flashModal(message, type) {
+        // Modal HTML oluştur
+        const modalId = 'flashModal_' + Date.now();
+        const modalHTML = `
+            <div class="modal fade" id="${modalId}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-${type} text-white">
+                            <h5 class="modal-title">
+                                <i class="bi bi-${type === 'danger' ? 'exclamation-triangle' : 'info-circle'}-fill me-1"></i>
+                                ${type === 'danger' ? 'Hata' : 'Bilgi'}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>${message}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Modal'ı DOM'a ekle
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Modal'ı göster
+        const modalElement = document.getElementById(modalId);
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        
+        // Modal kapatıldığında DOM'dan kaldır
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            modalElement.remove();
+        });
+    }
+});
+</script>
+
+<style>
+.model-info-card {
+    transition: all 0.3s ease;
+}
+.model-info-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+</style>
+{% endblock %} 

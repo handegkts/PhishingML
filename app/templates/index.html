@@ -1,0 +1,907 @@
+{% extends 'base.html' %}
+
+{% block title %}Ana Sayfa - PhishingML{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-4 border-light">
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3 shadow-sm border-primary h-100">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div>
+                                    <h4 class="card-title text-primary mb-3"><i class="bi bi-robot fs-3 me-2"></i>Model Eğitimi</h4>
+                                    <p class="card-text">
+                                        CSV formatında phishing veri setleri kullanarak makine öğrenmesi modellerini eğitin. 
+                                    </p>
+                                    <p class="card-text mb-2">
+                                        Desteklenen model türleri:
+                                    </p>
+                                    <ul class="list-unstyled mb-4 ps-4">
+                                        <li class="mb-1"><i class="bi bi-diagram-3 me-2 text-success"></i>Random Forest</li>
+                                        <li class="mb-1"><i class="bi bi-grid-3x3-gap me-2 text-info"></i>SVM</li>
+                                        <li class="mb-1"><i class="bi bi-diagram-2 me-2 text-warning"></i>Decision Tree</li>
+                                        <li class="mb-1"><i class="bi bi-calculator me-2 text-danger"></i>Naive Bayes</li>
+                                        <li><i class="bi bi-people me-2 text-primary"></i>KNN</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-auto pt-3">
+                                    <a href="{{ url_for('train_route') }}" class="btn btn-outline-primary"><i class="bi bi-chevron-right me-1"></i>Model Eğitimi</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3 shadow-sm border-success h-100">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h4 class="card-title text-success mb-3"><i class="bi bi-box-seam fs-3 me-2"></i>Veri Setleri</h4>
+                                <p class="card-text">
+                                    Phishing tespiti için proje içerisinde kullanılan örnek veri setleri.
+                                </p>
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <i class="bi bi-file-earmark-text me-2 text-success"></i>
+                                                <strong>Email Phishing Dataset</strong>
+                                                <div class="small text-muted mt-1">
+                                                    <span class="me-3"><i class="bi bi-building me-1"></i> Kaynak: <a href="https://www.kaggle.com/datasets/ethancratchley/email-phishing-dataset" target="_blank">Kaggle</a></span>
+                                                    <span><i class="bi bi-table me-1"></i> Toplam: 524846 kayıt</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <i class="bi bi-file-earmark-text me-2 text-success"></i>
+                                                <strong>Web Page Phishing Dataset
+                                                </strong>
+                                                <div class="small text-muted mt-1">
+                                                    <span class="me-3"><i class="bi bi-building me-1"></i> Kaynak: <a href="https://www.kaggle.com/datasets/danielfernandon/web-page-phishing-dataset" target="_blank">Kaggle</a></span>
+                                                    <span><i class="bi bi-table me-1"></i> Toplam: 100077 kayıt</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <i class="bi bi-file-earmark-text me-2 text-success"></i>
+                                                <strong>Phishing Websites
+                                                </strong>
+                                                <div class="small text-muted mt-1">
+                                                    <span class="me-3"><i class="bi bi-building me-1"></i> Kaynak: <a href="https://archive.ics.uci.edu/dataset/327/phishing+websites" target="_blank">UC Irvine Machine Learning Repository</a></span>
+                                                    <span><i class="bi bi-table me-1"></i> Toplam: 11055 kayıt</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="mt-3 small text-muted">
+                                    <i class="bi bi-info-circle me-1"></i> Veri set dosyalarına <span class="badge bg-light text-dark"><i class="bi bi-folder me-1"></i><code>instances/sample_datasets</code></span> dizini altından ulaşabilirsiniz.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 border-light">
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-3">
+            <div class="card-body">
+                                <h4 class="card-title text-primary mb-3"><i class="bi bi-stack me-2"></i>Modeller Hakkında</h4>
+                                <hr class="my-3">
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                                        <div class="card mb-4 border-light">
+                                            <div class="card-body p-4">
+                                                <h4 class="card-title text-success mb-3"><i class="bi bi-diagram-3 fs-3 me-2"></i>Random Forest</h4>
+                                                <p class="card-text mb-4">Çok sayıda karar ağacı kullanarak sınıflandırma yapan bir topluluk öğrenme modelidir. Her bir ağaç, veri setinin rastgele bir alt kümesi üzerinde eğitilir ve sonuçlar birleştirilir.</p>
+                                                <div class="d-flex justify-content-start">
+                                                    <button class="btn btn-outline-success me-2" type="button" data-bs-toggle="modal" data-bs-target="#randomForestDetailsModal">
+                                                        <i class="bi bi-card-text me-1"></i> Detaylar
+                                            </button>
+                                                    <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#randomForestExampleModal">
+                                                        <i class="bi bi-lightbulb-fill me-1"></i> Phishing Örneği
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                        <div class="card mb-4 border-light">
+                                            <div class="card-body p-4">
+                                                <h4 class="card-title text-info mb-3"><i class="bi bi-grid-3x3-gap fs-3 me-2"></i>SVM (Destek Vektör Makineleri)</h4>
+                                                <p class="card-text mb-4">Veri noktaları arasındaki optimal ayrım düzlemini bulan güçlü bir sınıflandırma algoritmasıdır. Çekirdek fonksiyonları sayesinde doğrusal olmayan problemlerde de etkilidir.</p>
+                                                <div class="d-flex justify-content-start">
+                                                    <button class="btn btn-outline-info me-2" type="button" data-bs-toggle="modal" data-bs-target="#svmDetailsModal">
+                                                        <i class="bi bi-card-text me-1"></i> Detaylar
+                                            </button>
+                                                    <button class="btn btn-outline-info" type="button" data-bs-toggle="modal" data-bs-target="#svmExampleModal">
+                                                        <i class="bi bi-lightbulb-fill me-1"></i> Phishing Örneği
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                        <div class="card mb-4 border-light">
+                                            <div class="card-body p-4">
+                                                <h4 class="card-title text-warning mb-3"><i class="bi bi-diagram-2 fs-3 me-2"></i>Decision Tree</h4>
+                                                <p class="card-text mb-4">Veriyi "if-then" kurallarıyla sınıflandıran, ağaç benzeri bir yapı kullanan modeldir. Sınıflandırma kararlarını adım adım alır.</p>
+                                                <div class="d-flex justify-content-start">
+                                                    <button class="btn btn-outline-warning me-2" type="button" data-bs-toggle="modal" data-bs-target="#decisionTreeDetailsModal">
+                                                        <i class="bi bi-card-text me-1"></i> Detaylar
+                                            </button>
+                                                    <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#decisionTreeExampleModal">
+                                                        <i class="bi bi-lightbulb-fill me-1"></i> Phishing Örneği
+                                            </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                                        <div class="card mb-4 border-light">
+                                            <div class="card-body p-4">
+                                                <h4 class="card-title text-danger mb-3"><i class="bi bi-calculator fs-3 me-2"></i>Naive Bayes</h4>
+                                                <p class="card-text mb-4">Bayes teoremi temelli olasılıksal bir sınıflandırıcıdır. Özellikler arasındaki bağımsızlık varsayımı ile çalışır. Metin sınıflandırma ve spam tespitinde özellikle etkilidir.</p>
+                                                <div class="d-flex justify-content-start">
+                                                    <button class="btn btn-outline-danger me-2" type="button" data-bs-toggle="modal" data-bs-target="#naiveBayesDetailsModal">
+                                                        <i class="bi bi-card-text me-1"></i> Detaylar
+                                            </button>
+                                                    <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#naiveBayesExampleModal">
+                                                        <i class="bi bi-lightbulb-fill me-1"></i> Phishing Örneği
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                        <div class="card mb-4 border-light">
+                                            <div class="card-body p-4">
+                                                <h4 class="card-title text-primary mb-3"><i class="bi bi-people fs-3 me-2"></i>KNN (K-En Yakın Komşu)</h4>
+                                                <p class="card-text mb-4">En yakın K komşunun sınıflarına göre sınıflandırma yapan, örnek tabanlı bir öğrenme algoritmasıdır. Tembel öğrenme (lazy learning) olarak da bilinir.</p>
+                                                <div class="d-flex justify-content-start">
+                                                    <button class="btn btn-outline-primary me-2" type="button" data-bs-toggle="modal" data-bs-target="#knnDetailsModal">
+                                                        <i class="bi bi-card-text me-1"></i> Detaylar
+                                            </button>
+                                                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#knnExampleModal">
+                                                        <i class="bi bi-lightbulb-fill me-1"></i> Phishing Örneği
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                        <div class="card mb-4 border-light">
+                                            <div class="card-body p-4">
+                                                <h4 class="card-title text-secondary mb-3"><i class="bi bi-graph-up fs-3 me-2"></i>Performans Karşılaştırması</h4>
+                                                <p class="card-text text-muted mb-4">Tüm modeller hiperparametre optimizasyonu ve 5-katlı çapraz doğrulama ile eğitilir. Modellerin performansı şu metriklerle değerlendirilir:</p>
+                                                <div class="d-flex justify-content-start">
+                                                    <button class="btn btn-outline-secondary me-2" type="button" data-bs-toggle="modal" data-bs-target="#metricDetailModal">
+                                                        <i class="bi bi-bar-chart-line me-1"></i> Metrikler
+                                            </button>
+                                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#phishingOrnekDetailModal">
+                                                        <i class="bi bi-lightbulb-fill me-1"></i> Phishing Örnekleri
+                                            </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Random Forest Modals -->
+<div class="modal fade" id="randomForestDetailsModal" tabindex="-1" aria-labelledby="randomForestDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="randomForestDetailsModalLabel"><i class="bi bi-diagram-3 me-2 text-success"></i>Random Forest - Detaylar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Teknik Detay:</strong> Random Forest, çok sayıda karar ağacının (estimators) kolektif gücünü kullanan bir topluluk öğrenme yöntemidir. Her bir ağaç, veri setinin rastgele bir alt örneklemi (bootstrap sample) ve özelliklerin rastgele bir alt kümesi üzerinde eğitilir. Bu rastgelelik, modelin çeşitliliğini artırır ve aşırı öğrenmeyi (overfitting) azaltmaya yardımcı olur.</p>
+        <p><strong>Phishing Tespitinde Kullanımı:</strong> Phishing URL'leri genellikle birden fazla ince ve karmaşık özelliğin birleşimiyle karakterize edilir. Random Forest, bu farklı özellikleri (örneğin, URL uzunluğu, özel karakterlerin varlığı, alan adının yaşı, SSL sertifikası durumu, anahtar kelimeler vb.) ve aralarındaki karmaşık etkileşimleri etkili bir şekilde yakalayabilir. Yüksek doğruluğu, gürbüzlüğü ve özelliklerin göreceli önemini belirleyebilme yeteneği nedeniyle phishing tespitinde tercih edilir.</p>
+        <p><strong>Hesaplama Yöntemi/İşleyişi:</strong> Bir URL sınıflandırılacağı zaman, bu URL her bir karar ağacına ayrı ayrı verilir. Her ağaç, URL'nin özelliklerine göre bir dizi "eğer-ise" kuralını takip ederek bir sınıf tahmini (phishing veya meşru) yapar. Sonuç olarak, tüm ağaçların tahminleri toplanır ve en çok oyu alan sınıf (çoğunluk oyu) Random Forest'ın nihai tahmini olur.</p>
+        <p><strong>Temel Formülasyon (Sınıflandırma):</strong></p>
+        <ul>
+            <li>Bir bireysel karar ağacı <code>f<sub>b</sub>(x)</code>, girdi özellikleri <code>x</code> (URL özellikleri) için bir sınıf tahmini üretir.</li>
+            <li>B adet ağaçtan oluşan bir Random Forest için nihai tahmin <code>Ŷ<sub>RF</sub>(x)</code>, tüm ağaçların tahminlerinin çoğunluk oyu ile belirlenir: <br>
+                <code>Ŷ<sub>RF</sub>(x) = mode { f<sub>1</sub>(x), f<sub>2</sub>(x), ..., f<sub>B</sub>(x) }</code>
+                <ul>
+                    <li><code>Ŷ<sub>RF</sub>(x)</code>: Modelin <code>x</code> girdisi için nihai tahmini.</li>
+                    <li><code>mode</code>: En sık tekrarlanan değeri (çoğunluk oyunu) ifade eder.</li>
+                    <li><code>f<sub>b</sub>(x)</code>: b-inci karar ağacının <code>x</code> girdisi için yaptığı tahmin.</li>
+                    <li><code>B</code>: Toplam karar ağacı sayısı.</li>
+                    <li><code>x</code>: URL'nin özellik vektörü.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Eğitim ve Test Süreci:</strong></p>
+        <ul>
+            <li><strong>Eğitim:</strong> Model, etiketlenmiş bir URL veri seti (her URL'nin phishing veya meşru olduğu belirtilmiş) kullanılarak eğitilir. Eğitim sırasında, her bir karar ağacı, veri setinin rastgele alt örnekleri ve özelliklerin rastgele alt kümeleri üzerinde oluşturulur. Amaç, URL özellikleriyle etiketler arasındaki kalıpları öğrenmektir. Hiperparametreler (örn: ağaç sayısı, ağaç derinliği) genellikle çapraz doğrulama (cross-validation) gibi tekniklerle en iyi performansı verecek şekilde optimize edilir.</li>
+            <li><strong>Test:</strong> Eğitim tamamlandıktan sonra model, daha önce hiç görmediği bir test veri seti üzerinde değerlendirilir. Test veri setindeki her URL için bir tahmin yapar ve bu tahminler gerçek etiketlerle karşılaştırılarak doğruluk, kesinlik, duyarlılık gibi performans metrikleri hesaplanır.</li>
+        </ul>
+        <hr>
+        <p><strong>Optimize Edilen Parametreler:</strong></p>
+        <ul>
+            <li><strong>n_estimators:</strong> Ormandaki ağaç sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Daha fazla ağaç genellikle modelin performansını ve kararlılığını artırır, ancak hesaplama maliyetini de yükseltir. Belirli bir noktadan sonra performans artışı azalır.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Genellikle 50-1000 arası (örn: 100, 200, 500).</li>
+                    <li><em>Proje İçin:</em> 100 veya 200 ile başlayıp, çapraz doğrulama sonuçlarına göre artırılabilir.</li>
+                </ul>
+            </li>
+            <li><strong>max_depth:</strong> Her bir karar ağacının maksimum derinliği.
+                <ul>
+                    <li><em>Açıklama:</em> Ağacın ne kadar karmaşık olabileceğini kontrol eder. Çok derin ağaçlar aşırı öğrenebilir (eğitim verisine çok iyi uyar ama yeni veride kötü performans gösterir), sığ ağaçlar ise yetersiz öğrenebilir.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Pozitif bir tamsayı (örn: 3, 5, 10, 20) veya <code>None</code> (düğümler tüm yapraklar saf olana kadar veya <code>min_samples_split</code>'e ulaşana kadar genişletilir).</li>
+                    <li><em>Proje İçin:</em> 5-15 arası değerler veya <code>None</code> (diğer budama parametreleriyle birlikte) denenebilir. Çapraz doğrulama ile ideal derinlik bulunmalıdır.</li>
+                </ul>
+            </li>
+            <li><strong>min_samples_split:</strong> Bir iç düğümü bölmek için gereken minimum örnek sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Aşırı öğrenmeyi kontrol etmeye yardımcı olur.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Tamsayı (örn: 2, 5, 10) veya float (toplam örnek sayısının oranı, örn: 0.01).</li>
+                    <li><em>Proje İçin:</em> Varsayılan 2 genellikle iyi bir başlangıçtır. Daha büyük değerler (örn: 5, 10) daha kısıtlayıcıdır ve aşırı öğrenmeyi azaltabilir.</li>
+                </ul>
+            </li>
+            <li><strong>min_samples_leaf:</strong> Bir yaprak düğümde bulunması gereken minimum örnek sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Bu da aşırı öğrenmeyi kontrol eder. Yaprakların çok küçük (az örnek içeren) olmasını engeller.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Tamsayı (örn: 1, 2, 5) veya float (oran).</li>
+                    <li><em>Proje İçin:</em> Varsayılan 1'den başlayarak artırılabilir (örn: 2, 5). <code>min_samples_split</code> ile birlikte ayarlanır.</li>
+                </ul>
+            </li>
+            <li><strong>max_features:</strong> En iyi bölünmeyi ararken dikkate alınacak maksimum özellik sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Ağaçların çeşitliliğini artırır.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> 'sqrt' (özellik sayısının karekökü), 'log2' (özellik sayısının log2'si), tamsayı veya float (oran).</li>
+                    <li><em>Proje İçin:</em> 'sqrt' veya 'log2' genellikle iyi sonuçlar verir ve önerilir.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Avantajları:</strong></p>
+        <ul>
+            <li>Yüksek doğruluk ve gürbüzlük</li>
+            <li>Aşırı öğrenmeye karşı direnç</li>
+            <li>Büyük veri setlerinde iyi performans</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="randomForestExampleModal" tabindex="-1" aria-labelledby="randomForestExampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="randomForestExampleModalLabel"><i class="bi bi-diagram-3 me-2 text-success"></i>Random Forest - Phishing Örneği</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Random Forest, birçok farklı özelliği bir arada değerlendirerek karmaşık phishing saldırılarını tespit etmede etkilidir. Aşağıda bazı örnek senaryolar verilmiştir:</p>
+        <ul>
+            <li><strong>Çoklu Alt Alan Adları ve Marka Taklidi:</strong> <code>www-paypal-com-login-secure-session-id12345.phishingsite.ru/update/</code> gibi URL'ler, kullanıcıları kandırmak için meşru bir siteye aitmiş gibi karmaşık bir yapı kullanır. Random Forest, bu tür yapıları ve şüpheli üst düzey alan adlarını (örn: .ru, .tk) analiz eder.</li>
+            <li><strong>IP Adresi Kullanımı ve HTTPS Eksikliği:</strong> <code>http://192.168.1.100/citibank/login.html</code> gibi doğrudan IP adresi içeren ve güvenli olmayan (HTTPS olmayan) bağlantılar genellikle phishing amaçlıdır.</li>
+            <li><strong>Şüpheli Anahtar Kelimeler ve Alan Adı Yaşı:</strong> URL içerisinde "login", "secure", "account", "update" gibi kelimelerin yoğun kullanımı ile birlikte çok yeni kaydedilmiş (düşük alan adı yaşı) bir domain'in birleşimi güçlü bir phishing göstergesidir.</li>
+            <li><strong>URL Kısaltıcılar ve Yönlendirmeler:</strong> <code>bit.ly/XyZ123</code> gibi kısaltılmış URL'lerin ardındaki gerçek hedefi (eğer çözümlenebiliyorsa) ve yönlendirme zincirlerini analiz ederek gizlenmiş phishing sitelerini ortaya çıkarabilir.</li>
+        </ul>
+        <p><em>Model, bu ve benzeri birçok özelliği (SSL sertifikası geçerliliği, kullanılan portlar, sayfa içeriğindeki formların yapısı vb.) birleştirerek karar verir.</em></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SVM Modals -->
+<div class="modal fade" id="svmDetailsModal" tabindex="-1" aria-labelledby="svmDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="svmDetailsModalLabel"><i class="bi bi-grid-3x3-gap me-2 text-info"></i>SVM - Detaylar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Teknik Detay:</strong> Destek Vektör Makineleri (SVM), veri noktalarını farklı sınıflara ayırmak için en uygun hiper-düzlemi (karar sınırını) bulmayı amaçlayan bir sınıflandırma algoritmasıdır. "En uygun" hiper-düzlem, farklı sınıflara ait en yakın veri noktaları (destek vektörleri) arasındaki marjini maksimize eden düzlemdir. Kernel hileleri (örn: RBF, polinom) kullanarak doğrusal olmayan verileri de etkili bir şekilde sınıflandırabilir.</p>
+        <p><strong>Phishing Tespitinde Kullanımı:</strong> SVM, özellikle yüksek boyutlu özellik uzaylarında (çok sayıda URL özelliği olduğunda) güçlüdür. Phishing URL'leri genellikle meşru sitelerden ince farklılıklarla ayrılır ve SVM bu ince ayrımları yakalayabilen net karar sınırları oluşturabilir. Kernel fonksiyonları, URL özelliklerinin karmaşık ve doğrusal olmayan ilişkilerini modelleyerek daha sofistike phishing desenlerini tespit etmeye yardımcı olur.</p>
+        <p><strong>Hesaplama Yöntemi/İşleyişi:</strong> Bir URL'nin özellikleri (uzunluk, anahtar kelimeler, alan adı bilgileri vb.) bir özellik vektörü olarak temsil edilir. SVM, bu vektörü eğitim aşamasında öğrendiği hiper-düzlemin hangi tarafında kaldığına göre sınıflandırır. Kernel kullanılıyorsa, veriler daha yüksek boyutlu bir uzaya haritalanır ve ayrım bu uzayda yapılır.</p>
+        <p><strong>Temel Formülasyon (Doğrusal SVM):</strong></p>
+        <ul>
+            <li>Karar fonksiyonu: <code>f(x) = w<sup>T</sup>x + b</code></li>
+            <li>Tahmin: <code>Ŷ = sign(w<sup>T</sup>x + b)</code> (Eğer sonuç > 0 ise bir sınıf, < 0 ise diğer sınıf)</li>
+            <li>Amaç, marjini maksimize etmek (yani <code>||w||</code>'yi minimize etmek) şu kısıtlar altında: <br>
+                <code>y<sub>i</sub>(w<sup>T</sup>x<sub>i</sub> + b) ≥ 1</code> (her veri noktası <code>(x<sub>i</sub>, y<sub>i</sub>)</code> için)
+                <ul>
+                    <li><code>f(x)</code>: Girdi <code>x</code> için karar fonksiyonunun değeri.</li>
+                    <li><code>w</code>: Ağırlık vektörü (hiper-düzlemin normali).</li>
+                    <li><code>x</code>: Girdi özellik vektörü.</li>
+                    <li><code>b</code>: Bias (sapma) terimi (hiper-düzlemin orijinden uzaklığı).</li>
+                    <li><code>Ŷ</code>: Modelin tahmini sınıfı (+1 veya -1).</li>
+                    <li><code>sign()</code>: İşaret fonksiyonu.</li>
+                    <li><code>y<sub>i</sub></code>: i-inci veri noktasının gerçek sınıf etiketi (+1 veya -1).</li>
+                    <li><code>x<sub>i</sub></code>: i-inci veri noktasının özellik vektörü.</li>
+                    <li><code>||w||</code>: Ağırlık vektörünün normu (uzunluğu).</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Eğitim ve Test Süreci:</strong></p>
+        <ul>
+            <li><strong>Eğitim:</strong> SVM modeli, etiketlenmiş URL'lerden (phishing/meşru) oluşan bir eğitim veri seti ile beslenir. Bu veri seti, her bir URL için çıkarılmış bir dizi özellik (örn: alan adının uzunluğu, IP adresi kullanımı, SSL sertifikası varlığı, şüpheli TLD kullanımı vb.) ve bir sınıf etiketi ('phishing'/'meşru') içerir. Algoritma, bu veri noktalarını en iyi şekilde ayıran bir hiper-düzlem (veya kernel kullanılıyorsa daha karmaşık bir karar sınırı) bulmaya çalışır. Bu süreç, marjini maksimize etmeyi ve sınıflandırma hatasını minimize etmeyi hedefler. C (düzenlileştirme), gamma ve kernel tipi gibi hiperparametreler, genellikle çapraz doğrulama ile optimize edilir.</li>
+            <li><strong>Test:</strong> Model eğitildikten sonra, performansını ölçmek için ayrı bir test veri seti kullanılır. Test setindeki her URL, model tarafından sınıflandırılır ve tahminlerin doğruluğu, gerçek etiketlerle karşılaştırılarak değerlendirilir.</li>
+        </ul>
+        <hr>
+        <p><strong>Optimize Edilen Parametreler:</strong></p>
+        <ul>
+            <li><strong>C:</strong> Düzenlileştirme parametresi.
+                <ul>
+                    <li><em>Açıklama:</em> Yanlış sınıflandırılan eğitim örneklerine verilen cezanın tersidir. Küçük C değerleri daha yumuşak (geniş) bir marjin toleransı sağlarken, büyük C değerleri modeli eğitim verisine daha sıkı uydurmaya çalışır (potansiyel olarak aşırı öğrenme).</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Genellikle pozitif bir float değer (örn: 0.01, 0.1, 1, 10, 100). Logaritmik bir ölçekte aranır.</li>
+                    <li><em>Proje İçin:</em> 0.1, 1, 10 gibi değerler denenerek çapraz doğrulama ile en iyisi seçilmelidir.</li>
+                </ul>
+            </li>
+            <li><strong>kernel:</strong> Kullanılacak kernel tipi.
+                <ul>
+                    <li><em>Açıklama:</em> Veri noktalarını daha yüksek boyutlu bir uzaya haritalayarak doğrusal olarak ayrılamayan verilerin ayrılmasını sağlar.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> 'linear', 'poly', 'rbf' (Radial Basis Function), 'sigmoid'.</li>
+                    <li><em>Proje İçin:</em> 'rbf' genellikle karmaşık ve doğrusal olmayan ilişkiler içeren veri setleri için iyi bir varsayılandır ve phishing verisi için uygun olabilir. 'linear' daha hızlıdır ve veri doğrusala yakınsa denenebilir.</li>
+                </ul>
+            </li>
+            <li><strong>gamma:</strong> 'rbf', 'poly' ve 'sigmoid' kernelleri için katsayı.
+                <ul>
+                    <li><em>Açıklama:</em> Tek bir eğitim örneğinin etki alanını tanımlar. Düşük gamma değerleri uzak bir etki alanı anlamına gelir (daha yumuşak sınırlar), yüksek gamma değerleri ise yakın bir etki alanı anlamına gelir (daha karmaşık sınırlar, aşırı öğrenme riski).</li>
+                    <li><em>Öneri/Değer Aralığı:</em> 'scale' (1 / (n_features * X.var())), 'auto' (1 / n_features) veya float değerler (örn: 0.001, 0.01, 0.1, 1).</li>
+                    <li><em>Proje İçin:</em> 'scale' genellikle iyi bir başlangıç noktasıdır. 'rbf' kernel kullanılıyorsa C ile birlikte optimize edilmelidir.</li>
+                </ul>
+            </li>
+            <li><strong>degree:</strong> 'poly' kernel için polinom derecesi.
+                <ul>
+                    <li><em>Açıklama:</em> Polinomun esnekliğini belirler.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Tamsayı (örn: 2, 3, 4).</li>
+                    <li><em>Proje İçin:</em> 'poly' kernel deneniyorsa genellikle 2 veya 3 kullanılır. Yüksek dereceler hesaplama maliyetini artırır ve aşırı öğrenmeye yol açabilir.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Avantajları:</strong></p>
+        <ul>
+            <li>Yüksek boyutlu uzaylarda etkili</li>
+            <li>Bellek verimli (yalnızca destek vektörleri kullanır)</li>
+            <li>Doğrusal olmayan sınıflandırma yeteneği</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="svmExampleModal" tabindex="-1" aria-labelledby="svmExampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="svmExampleModalLabel"><i class="bi bi-grid-3x3-gap me-2 text-info"></i>SVM - Phishing Örneği</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>SVM (Destek Vektör Makineleri), özellikler arasında optimal bir ayrım çizgisi bularak phishing ve meşru siteleri ayırmada, özellikle karmaşık ve net olmayan durumlarda güçlüdür:</p>
+        <ul>
+            <li><strong>Yanıltıcı Marka Kullanımı ve Farklı Ana Domain:</strong> <code>https://apple.com-id-verification.some-other-domain.com/</code>. Burada "apple.com" ifadesi kullanıcıyı yanıltmak için kullanılırken, asıl yetkili alan adı "some-other-domain.com"dur. SVM, bu tür yapısal anomalileri etkili bir şekilde ayırabilir.</li>
+            <li><strong>Karmaşık ve Meşru Görünen Alt Alan Yapıları:</strong> <code>https://chaseonline.chase.com.secure.login.attempt.info/</code>. Bu URL, meşru bir banka sitesini taklit etmeye çalışır. SVM, bu kadar çok sayıda alt alan adının ve bunların yapısının normal kullanım örüntülerinden ne kadar saptığını değerlendirebilir.</li>
+            <li><strong>Gizlenmiş Tehditler (Hex Kodlama, Standart Dışı Portlar):</strong> <code>http://example.com:%38%30/%70%61%67%65.html</code> (burada ':80' portu ve 'page.html' hex kodludur). SVM, bu tür normal dışı karakter ve port kullanımlarını özellik olarak alıp phishing olasılığını hesaplayabilir.</li>
+            <li><strong>Kısa Ömürlü Alan Adları ve Şüpheli Anahtar Kelimeler:</strong> Çok yeni kaydedilmiş bir alan adı (örneğin, 1 haftadan az) üzerinde "login", "verify", "urgent" gibi kelimeler içeren bir sayfa barındırılıyorsa, SVM bu kombinasyonu yüksek riskli olarak sınıflandırabilir.</li>
+        </ul>
+        <p><em>SVM, kernel fonksiyonları sayesinde bu özellikler arasındaki doğrusal olmayan ilişkileri de modelleyerek daha esnek bir sınıflandırma sağlar.</em></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Decision Tree Modals -->
+<div class="modal fade" id="decisionTreeDetailsModal" tabindex="-1" aria-labelledby="decisionTreeDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="decisionTreeDetailsModalLabel"><i class="bi bi-diagram-2 me-2 text-warning"></i>Decision Tree - Detaylar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Teknik Detay:</strong> Decision Tree, veriyi özelliklerine göre tekrar tekrar bölerek ağaç benzeri bir yapı oluşturan denetimli bir öğrenme algoritmasıdır. Her bir iç düğüm (internal node) bir veri özelliğini, her bir dal (branch) bu özelliğe dayalı bir karar kuralını (testin sonucunu) ve her bir yaprak düğüm (leaf node) bir sınıf etiketini (sınıflandırma ağaçlarında) veya sayısal bir değeri (regresyon ağaçlarında) temsil eder.</p>
+        <p><strong>Phishing Tespitinde Kullanımı:</strong> Decision Tree, yorumlanabilirliği yüksek olduğu için phishing tespitinde kullanışlıdır. Hangi URL özelliklerinin (örn: "URL'de 'https' var mı?", "Alan adı yaşı 6 aydan az mı?") bir siteyi phishing olarak sınıflandırmak için önemli olduğunu açıkça gösteren kurallar üretebilirler. Bu, analistlerin modelin kararlarını anlamasına yardımcı olur.</p>
+        <p><strong>Hesaplama Yöntemi/İşleyişi:</strong> Bir URL sınıflandırılacağı zaman, ağacın kök düğümünden başlanır. Kök düğümdeki özelliğe göre URL test edilir ve testin sonucuna göre ilgili dala ilerlenir. Bu işlem, bir yaprak düğüme ulaşılana kadar tekrarlanır. Ulaşılan yaprak düğümün sınıf etiketi (phishing veya meşru) URL için tahmin olarak atanır. Bölmeler genellikle Gini kirliliği veya entropi gibi saflık ölçütlerini optimize edecek şekilde yapılır.</p>
+        <p><strong>Temel Formülasyon (Bölme Kriterleri):</strong></p>
+        <ul>
+            <li><strong>Gini Kirliliği:</strong> Bir düğümdeki rastgele seçilen bir elemanın yanlış sınıflandırılma olasılığı. Bir düğümdeki sınıfların olasılıkları <code>p<sub>k</sub></code> olmak üzere: <br>
+                <code>Gini = 1 - Σ (p<sub>k</sub>)<sup>2</sup></code>
+                <ul>
+                    <li><code>p<sub>k</sub></code>: Düğümdeki k sınıfına ait örneklerin oranı (k sınıfının olasılığı).</li>
+                    <li><code>Σ</code>: Toplam sembolü (tüm sınıflar üzerinden).</li>
+                </ul>
+            </li>
+            <li><strong>Entropi:</strong> Bir düğümdeki belirsizlik veya düzensizlik ölçüsü: <br>
+                <code>Entropi = - Σ p<sub>k</sub> * log<sub>2</sub>(p<sub>k</sub>)</code>
+                 <ul>
+                    <li><code>p<sub>k</sub></code>: Düğümdeki k sınıfına ait örneklerin oranı.</li>
+                    <li><code>log<sub>2</sub></code>: 2 tabanında logaritma.</li>
+                </ul>
+            </li>
+            <li>Ağaç, her adımda bu metriklerde en fazla azalmayı (bilgi kazancını) sağlayan özelliği ve bölünme noktasını seçer.</li>
+        </ul>
+        <p><strong>Eğitim ve Test Süreci:</strong></p>
+        <ul>
+            <li><strong>Eğitim:</strong> Decision Tree, etiketlenmiş URL'lerden (phishing/meşru) oluşan bir eğitim veri seti kullanılarak inşa edilir. Algoritma, veriyi en iyi ayıran özellikleri ve bölünme noktalarını (yukarıda bahsedilen Gini veya Entropi gibi kriterlere göre) ardışık olarak seçerek ağaç yapısını oluşturur. Aşırı öğrenmeyi önlemek için ağacın maksimum derinliği veya yaprak düğümlerdeki minimum örnek sayısı gibi hiperparametreler ayarlanır (genellikle çapraz doğrulama ile).</li>
+            <li><strong>Test:</strong> Oluşturulan ağaç, daha önce görmediği bir test veri seti üzerinde denenir. Test URL'leri ağaçtan geçirilerek sınıflandırılır ve modelin performansı (doğruluk, vb.) ölçülür.</li>
+        </ul>
+        <hr>
+        <p><strong>Optimize Edilen Parametreler:</strong></p>
+        <ul>
+            <li><strong>criterion:</strong> Bölünme kalitesini ölçme kriteri.
+                <ul>
+                    <li><em>Açıklama:</em> Ağacın hangi özelliğe ve değere göre bölüneceğine karar vermek için kullanılır.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> 'gini' (Gini Kirliliği) veya 'entropy' (Bilgi Kazancı).</li>
+                    <li><em>Proje İçin:</em> 'gini' genellikle daha hızlıdır ve varsayılan olarak iyi çalışır. 'entropy' bazen biraz daha dengeli ağaçlar üretebilir. Her ikisi de denenebilir.</li>
+                </ul>
+            </li>
+            <li><strong>max_depth:</strong> Ağacın maksimum derinliği.
+                <ul>
+                    <li><em>Açıklama:</em> Modelin karmaşıklığını kontrol eder. Sınırsız derinlik aşırı öğrenmeye yol açabilir.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Pozitif tamsayı (örn: 3, 5, 10) veya <code>None</code>.</li>
+                    <li><em>Proje İçin:</em> Phishing özelliklerinin sayısına ve karmaşıklığına bağlı olarak 5-10 gibi bir değerle başlanabilir veya çapraz doğrulama ile optimize edilebilir.</li>
+                </ul>
+            </li>
+            <li><strong>min_samples_split:</strong> Bir iç düğümü bölmek için gereken minimum örnek sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Aşırı öğrenmeyi önlemek için kullanılır.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Tamsayı > 1 (örn: 2, 5, 10) veya float (oran).</li>
+                    <li><em>Proje İçin:</em> Varsayılan 2'den başlayarak, daha büyük değerler (örn: 10, 20) denenerek aşırı öğrenme kontrol edilebilir.</li>
+                </ul>
+            </li>
+            <li><strong>min_samples_leaf:</strong> Bir yaprak düğümde olması gereken minimum örnek sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Aşırı öğrenmeyi kontrol eder, yaprakların çok spesifik (az örnekli) olmasını engeller.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Tamsayı >= 1 (örn: 1, 5, 10) veya float (oran).</li>
+                    <li><em>Proje İçin:</em> Varsayılan 1'den başlayarak, daha büyük değerler (örn: 5, 10) denenerek model genelleştirilebilir.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Avantajları:</strong></p>
+        <ul>
+            <li>Kolay yorumlanabilirlik</li>
+            <li>Hem sayısal hem kategorik veriyi işleyebilme</li>
+            <li>Veri hazırlama gereksinimleri düşük</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="decisionTreeExampleModal" tabindex="-1" aria-labelledby="decisionTreeExampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="decisionTreeExampleModalLabel"><i class="bi bi-diagram-2 me-2 text-warning"></i>Decision Tree - Phishing Örneği</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Decision Tree, bir URL'nin phishing olup olmadığına karar vermek için bir dizi "eğer-ise" kuralı oluşturur. Bu kurallar genellikle kolay yorumlanabilir:</p>
+        <ul>
+            <li><strong>Kural 1:</strong> "EĞER URL'de HTTPS yoksa ('http://') VE URL metninde 'login' veya 'signin' kelimeleri geçiyorsa VE alan adı 30 günden daha yeniyse -> MUHTEMELEN PHISHING"
+                <ul><li><em>Örnek:</em> <code>http://new-bank-loginportal.com/auth</code> (1 hafta önce kaydedilmiş)</li></ul>
+            </li>
+            <li><strong>Kural 2:</strong> "EĞER URL'de birden fazla çift taksim ('//') bulunuyorsa (ilk 'http://' veya 'https://' hariç) -> MUHTEMELEN PHISHING (Yönlendirme gizleme tekniği)"
+                <ul><li><em>Örnek:</em> <code>http://google.com//malicious-redirect.com/phish</code></li></ul>
+            </li>
+            <li><strong>Kural 3:</strong> "EĞER alan adında bilinen bir marka adı (örn: 'paypal', 'amazon', 'netflix') geçiyor AMA asıl alan adı bu markaya ait değilse VE alan adı .xyz, .top, .tk, .club gibi jenerik bir uzantıya sahipse -> MUHTEMELEN PHISHING"
+                <ul><li><em>Örnek:</em> <code>amazon-customer-support.helpdesk.xyz</code></li></ul>
+            </li>
+            <li><strong>Kural 4:</strong> "EĞER URL'de '@' sembolü varsa (alan adından önce) -> MUHTEMELEN PHISHING (Eski bir aldatmaca tekniği)"
+                <ul><li><em>Örnek:</em> <code>http://www.trustedbank.com@phishersite.com/login</code></li></ul>
+            </li>
+        </ul>
+        <p><em>Decision Tree, bu tür kuralları veriden öğrenerek bir ağaç yapısı oluşturur ve yeni URL'leri bu kurallara göre sınıflandırır.</em></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Naive Bayes Modals -->
+<div class="modal fade" id="naiveBayesDetailsModal" tabindex="-1" aria-labelledby="naiveBayesDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="naiveBayesDetailsModalLabel"><i class="bi bi-calculator me-2 text-danger"></i>Naive Bayes - Detaylar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Teknik Detay:</strong> Naive Bayes, Bayes Teoremi'ne dayanan ve özellikler arasında güçlü (safça, "naive") bağımsızlık varsayımları yapan bir olasılıksal sınıflandırıcı ailesidir. Bir veri noktasının belirli bir sınıfa ait olma olasılığını, o veri noktasının özelliklerinin gözlemlenmesi durumunda hesaplar.</p>
+        <p><strong>Phishing Tespitinde Kullanımı:</strong> Naive Bayes, özellikle metin sınıflandırma görevlerinde (örneğin, spam tespiti) etkili olduğu için phishing URL'lerinin veya web sayfası içeriklerinin analizinde kullanılır. URL'deki şüpheli anahtar kelimelerin ("login", "verify", "secure", "bank") varlığı veya sıklığı gibi özelliklerin, bir sitenin phishing olup olmadığına dair olasılıksal çıkarımlar yapmak için kullanılabilir. Hızlıdır ve genellikle az miktarda eğitim verisiyle bile iyi performans gösterebilir.</p>
+        <p><strong>Hesaplama Yöntemi/İşleyişi:</strong> Bir URL'nin özellikleri (<code>X = {x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>n</sub>}</code>) verildiğinde, Naive Bayes her bir sınıf (<code>Y<sub>k</sub></code>, örn: phishing veya meşru) için son olasılığı (posterior probability) <code>P(Y<sub>k</sub> | X)</code> hesaplar. Özelliklerin bağımsız olduğu varsayımıyla bu, öncül olasılık <code>P(Y<sub>k</sub>)</code> ve her bir özellik için koşullu olasılıkların <code>P(x<sub>i</sub> | Y<sub>k</sub>)</code> çarpımıyla orantılıdır. En yüksek son olasılığa sahip sınıf, tahmin olarak seçilir.</p>
+        <p><strong>Temel Formülasyon:</strong></p>
+        <ul>
+            <li>Bayes Teoremi: <code>P(Y | X) = [P(X | Y) * P(Y)] / P(X)</code></li>
+            <li>Naive Bayes sınıflandırıcısı (özelliklerin bağımsızlığı varsayımıyla): <br>
+                <code>Ŷ = argmax<sub>Yk</sub> P(Y<sub>k</sub>) * Π P(x<sub>i</sub> | Y<sub>k</sub>)</code>
+                <ul>
+                    <li><code>Ŷ</code>: Modelin tahmin ettiği sınıf.</li>
+                    <li><code>argmax<sub>Yk</sub></code>: Parantez içindeki ifadeyi maksimize eden <code>Y<sub>k</sub></code> sınıfını bulur.</li>
+                    <li><code>P(Y<sub>k</sub>)</code>: <code>Y<sub>k</sub></code> sınıfının öncül (prior) olasılığı.</li>
+                    <li><code>Π</code>: Çarpım sembolü (tüm özellikler üzerinden).</li>
+            </li>
+            <li><code>P(Y<sub>k</sub>)</code>: <code>Y<sub>k</sub></code> sınıfının öncül olasılığı.</li>
+            <li><code>P(x<sub>i</sub> | Y<sub>k</sub>)</code>: <code>Y<sub>k</sub></code> sınıfı verildiğinde <code>x<sub>i</sub></code> özelliğinin görülme olasılığı.</li>
+        </ul>
+        <p><strong>Eğitim ve Test Süreci:</strong></p>
+        <ul>
+            <li><strong>Eğitim:</strong> Naive Bayes modeli, etiketlenmiş URL'lerden (phishing/meşru) oluşan bir eğitim veri seti kullanılarak eğitilir. Bu süreçte, her sınıf (phishing, meşru) için öncül olasılıklar (<code>P(Y<sub>k</sub>)</code>) ve her bir özelliğin her bir sınıf için koşullu olasılıkları (<code>P(x<sub>i</sub> | Y<sub>k</sub>)</code>) hesaplanır. Örneğin, "login" kelimesinin phishing URL'lerinde ne sıklıkta, meşru URL'lerde ne sıklıkta geçtiği gibi.</li>
+            <li><strong>Test:</strong> Model, eğitimde kullanılmayan bir test veri setindeki URL'leri sınıflandırır. Her test URL'si için, özelliklerine dayanarak her sınıfa ait olma olasılığı hesaplanır ve en yüksek olasılığa sahip sınıf tahmin edilir. Performans metrikleri bu tahminlere göre hesaplanır.</li>
+        </ul>
+        <hr>
+        <p><strong>Optimize Edilen Parametreler (ve Önemli Ayarlar):</strong></p>
+        <ul>
+            <li><strong>alpha (MultinomialNB, BernoulliNB için):</strong> Katkılı (Laplace/Lidstone) düzeltme parametresi.
+                <ul>
+                    <li><em>Açıklama:</em> Eğitim verisinde hiç görülmemiş özellikler için sıfır olasılık sorununu önler. 0'a yakın değerler düzeltmeyi azaltır, daha büyük değerler artırır.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Genellikle pozitif bir float (örn: 0.01, 0.1, 0.5, 1.0).</li>
+                    <li><em>Proje İçin:</em> Varsayılan 1.0 genellikle iyi çalışır. Veri setindeki özelliklerin seyreklik durumuna göre ayarlanabilir.</li>
+                </ul>
+            </li>
+            <li><strong>var_smoothing (GaussianNB için):</strong> Hesaplamalara stabilite katmak için varyanslara eklenen en büyük varyansın bir oranı.
+                <ul>
+                    <li><em>Açıklama:</em> Sayısal özelliklerin varyanslarının çok küçük olmasından kaynaklanabilecek sayısal sorunları engeller.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Genellikle küçük bir pozitif float (örn: 1e-9, 1e-8).</li>
+                    <li><em>Proje İçin:</em> Varsayılan 1e-9 genellikle yeterlidir ve nadiren ayarlanması gerekir.</li>
+                </ul>
+            </li>
+            <li><em>Not: Naive Bayes modelleri genellikle diğerlerine göre daha az hiperparametre ayarı gerektirir. Yukarıdakiler en yaygın ayarlardır.</em></li>
+        </ul>
+        <p><strong>Avantajları:</strong></p>
+        <ul>
+            <li>Küçük eğitim setlerinde bile iyi çalışır</li>
+            <li>Çok sınıflı problemlerde verimli</li>
+            <li>Hızlı eğitim ve tahmin</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="naiveBayesExampleModal" tabindex="-1" aria-labelledby="naiveBayesExampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="naiveBayesExampleModalLabel"><i class="bi bi-calculator me-2 text-danger"></i>Naive Bayes - Phishing Örneği</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Naive Bayes, özellikle URL ve sayfa içeriğindeki metinsel verilerde belirli kelime ve kalıpların olasılıklarını kullanarak phishing tespiti yapar:</p>
+        <ul>
+            <li><strong>Şüpheli Anahtar Kelime Yoğunluğu:</strong> <code>http://update-your-account-details-now-securely-immediately-bank-online.info/</code> gibi bir URL, "update", "account", "securely", "immediately", "bank" gibi kelimelerin normalden fazla bir arada bulunması nedeniyle Naive Bayes tarafından şüpheli bulunabilir.</li>
+            <li><strong>Marka Adı ve Jenerik Terimler:</strong> <code>https://microsoft-support-ticket12345.webredirect.xyz/</code>. Burada "microsoft-support" gibi meşru bir ifade, güvenilir olmayan bir alan adı (.webredirect.xyz) ile birleştiğinde phishing olasılığını artırır.</li>
+            <li><strong>Aciliyet ve Tehdit İçeren İfadeler (Sayfa İçeriğinde):</strong> Eğer model sayfa içeriğini de analiz ediyorsa, "Hesabınız askıya alındı!", "Ödül kazandınız, hemen tıklayın!", "Şifrenizi doğrulamak için buraya girin" gibi ifadeler içeren sayfalar yüksek phishing skoru alabilir.</li>
+            <li><strong>Meşru Servislerin Taklidi:</strong> <code>login.microsoftonline.com.attackerdomain.com/common/oauth2/authorize...</code> gibi URL'lerde, meşru bir giriş sayfasının adresi (login.microsoftonline.com) bir alt alan adı olarak kullanılarak kullanıcı kandırılmaya çalışılır. Naive Bayes, bu tür kalıpları (bilinen bir domainin ardından gelen ek domain parçaları) şüpheli olarak değerlendirebilir.</li>
+        </ul>
+        <p><em>Naive Bayes, bu kelimelerin ve kalıpların daha önce görülen phishing ve meşru sitelerdeki bulunma sıklıklarına (olasılıklarına) dayanarak bir tahmin yapar.</em></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KNN Modals -->
+<div class="modal fade" id="knnDetailsModal" tabindex="-1" aria-labelledby="knnDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="knnDetailsModalLabel"><i class="bi bi-people me-2 text-primary"></i>KNN - Detaylar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Teknik Detay:</strong> K-En Yakın Komşu (KNN), denetimli öğrenme algoritmalarından biridir ve hem sınıflandırma hem de regresyon problemleri için kullanılabilir. Örnek tabanlı bir öğrenme yöntemidir, yani eğitim verilerini ezberler ve yeni bir veri noktasını sınıflandırmak veya tahmin etmek için bu ezberlenmiş örneklere olan benzerliğine bakar. Karar vermek için yeni noktanın en yakın 'K' komşusunun etiketlerini kullanır.</p>
+        <p><strong>Phishing Tespitinde Kullanımı:</strong> KNN, phishing URL'lerini tespit etmek için kullanılabilir çünkü benzer özelliklere (URL yapısı, anahtar kelimeler, alan adı özellikleri vb.) sahip URL'lerin genellikle aynı sınıfa (phishing veya meşru) ait olduğu varsayılabilir. Örneğin, bilinen bir phishing URL'sine çok benzeyen yeni bir URL'nin de phishing olma olasılığı yüksektir. "Typosquatting" (örn: g00gle.com) gibi benzerliklere dayalı saldırıları yakalamada etkili olabilir.</p>
+        <p><strong>Hesaplama Yöntemi/İşleyişi:</strong> Yeni bir URL geldiğinde, KNN aşağıdaki adımları izler:
+            <ol>
+                <li>URL'nin özellik vektörü ile eğitim setindeki tüm URL'lerin özellik vektörleri arasındaki mesafeyi (genellikle Öklid mesafesi) hesaplar.</li>
+                <li>Bu mesafelere göre en yakın 'K' adet komşu URL'yi belirler.</li>
+                <li>Sınıflandırma için, bu 'K' komşunun çoğunluğunun ait olduğu sınıfı (phishing veya meşru) yeni URL için tahmin olarak atar. (Regresyon için komşuların değerlerinin ortalaması alınır).</li>
+            </ol>
+            'K' değeri ve mesafe metriği önemli parametrelerdir.
+        </p>
+        <p><strong>Temel Formülasyon (Öklid Mesafesi):</strong></p>
+        <ul>
+            <li>İki veri noktası <code>p = (p<sub>1</sub>, ..., p<sub>n</sub>)</code> ve <code>q = (q<sub>1</sub>, ..., q<sub>n</sub>)</code> arasındaki Öklid mesafesi: <br>
+                <code>d(p, q) = √[ (p<sub>1</sub>-q<sub>1</sub>)<sup>2</sup> + (p<sub>2</sub>-q<sub>2</sub>)<sup>2</sup> + ... + (p<sub>n</sub>-q<sub>n</sub>)<sup>2</sup> ] = √[ Σ (p<sub>i</sub>-q<sub>i</sub>)<sup>2</sup> ]</code>
+            </li>
+            <li>Tahmin: Yeni nokta <code>x<sub>new</sub></code> için, en yakın K komşunun <code>N<sub>K</sub>(x<sub>new</sub>)</code> etiketlerinin çoğunluk oyu.</li>
+        </ul>
+        <p><strong>Eğitim ve Test Süreci:</strong></p>
+        <ul>
+            <li><strong>Eğitim:</strong> KNN için "eğitim" aşaması oldukça basittir; esasen etiketlenmiş eğitim veri setini (URL özellikleri ve phishing/meşru etiketleri) hafızada saklamaktan ibarettir. Bu veri seti, her bir URL'nin sayısal veya kategorik özelliklerden oluşan bir vektörle temsil edildiği ve bir sınıf etiketine sahip olduğu bir formattadır. Herhangi bir karmaşık model parametresi öğrenilmez, bu yüzden "tembel öğrenme" (lazy learning) algoritması olarak da adlandırılır. 'K' değeri (komşu sayısı) ve kullanılacak mesafe metriği gibi hiperparametreler genellikle çapraz doğrulama ile belirlenir.</li>
+            <li><strong>Test:</strong> Bir test URL'si geldiğinde, bu URL'nin özellikleri eğitim setindeki tüm örneklerle karşılaştırılır. En yakın 'K' komşu bulunur ve bu komşuların çoğunluk sınıfı, test URL'si için tahmin olarak atanır. Modelin performansı, bu tahminlerin doğruluğuna göre değerlendirilir.</li>
+        </ul>
+        <hr>
+        <p><strong>Optimize Edilen Parametreler:</strong></p>
+        <ul>
+            <li><strong>n_neighbors (K değeri):</strong> Sınıflandırma için kullanılacak en yakın komşu sayısı.
+                <ul>
+                    <li><em>Açıklama:</em> Modelin karar sınırının ne kadar esnek olacağını belirler. Küçük K daha esnek sınırlar (gürültüye duyarlı olabilir), büyük K daha düzgün sınırlar anlamına gelir.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Genellikle küçük bir pozitif tek tamsayı (örn: 1, 3, 5, 7, ..., 21).</li>
+                    <li><em>Proje İçin:</em> Genellikle 3 ile 15 arasında bir tek sayı (örn: 5, 7, 11) iyi bir başlangıçtır. Çapraz doğrulama ile optimum K değeri bulunmalıdır.</li>
+                </ul>
+            </li>
+            <li><strong>weights:</strong> Tahmin yaparken komşulara verilecek ağırlık.
+                <ul>
+                    <li><em>Açıklama:</em> Komşuların tahmine olan etkisini belirler.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> 'uniform' (tüm komşular eşit ağırlıklı), 'distance' (yakın komşulara daha fazla ağırlık verilir, yani mesafenin tersiyle orantılı).</li>
+                    <li><em>Proje İçin:</em> 'distance' genellikle 'uniform'dan daha iyi sonuçlar verir, çünkü daha yakın komşuların daha alakalı olması beklenir.</li>
+                </ul>
+            </li>
+            <li><strong>metric:</strong> Komşular arasındaki mesafeyi hesaplamak için kullanılacak metrik.
+                <ul>
+                    <li><em>Açıklama:</em> Özelliklerin türüne ve dağılımına göre farklı mesafe metrikleri daha uygun olabilir.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> 'euclidean', 'manhattan', 'minkowski', 'chebyshev' vb.</li>
+                    <li><em>Proje İçin:</em> 'euclidean' (Öklid mesafesi) veya 'minkowski' (p=2 ile Öklid'e eşdeğer) genellikle standart ve iyi bir başlangıçtır. Sayısal özellikler için uygundur.</li>
+                </ul>
+            </li>
+            <li><strong>p (yalnızca 'minkowski' metriği için):</strong> Minkowski metriği için güç parametresi.
+                <ul>
+                    <li><em>Açıklama:</em> p=1 Manhattan mesafesine, p=2 ise Öklid mesafesine karşılık gelir.</li>
+                    <li><em>Öneri/Değer Aralığı:</em> Tamsayı ≥ 1.</li>
+                    <li><em>Proje İçin:</em> Metrik 'minkowski' ise genellikle p=1 veya p=2 kullanılır.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Avantajları:</strong></p>
+        <ul>
+            <li>Basit ve anlaşılması kolay</li>
+            <li>Eğitim aşaması çok hızlı</li>
+            <li>Yeni örnekler eklendiğinde yeniden eğitim gerektirmez</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="knnExampleModal" tabindex="-1" aria-labelledby="knnExampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="knnExampleModalLabel"><i class="bi bi-people me-2 text-primary"></i>KNN - Phishing Örneği</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>K-En Yakın Komşu (KNN), yeni bir URL'yi, özelliklerine göre daha önce etiketlenmiş (phishing veya meşru) URL'lerden oluşan bir veri setindeki en benzer "K" komşusuna bakarak sınıflandırır:</p>
+        <ul>
+            <li><strong>Tipografik Hatalar (Typosquatting):</strong> Eğer eğitim verisinde <code>microsft.com</code> (Microsoft taklidi) veya <code>paypa1.com</code> (PayPal taklidi, l yerine 1) gibi URL'ler phishing olarak etiketlenmişse, KNN yeni gelen <code>gooogle.com</code> (Google taklidi) veya <code>amaz0n-login.net</code> (Amazon taklidi, o yerine 0) gibi URL'leri bu örneklere benzerlikleri (özellikle URL metni üzerinden) nedeniyle phishing olarak sınıflandırma eğiliminde olur.</li>
+            <li><strong>Yapısal Benzerlik:</strong> <code>login-apple.id.veryfication.com</code> gibi bir URL, daha önce phishing olarak etiketlenmiş <code>apple-id-login.phish-example.com</code> gibi bir URL ile URL uzunluğu, nokta sayısı, alt alan adı sayısı ve kullanılan anahtar kelimeler ("login", "apple", "id", "verification") açısından yüksek benzerlik gösteriyorsa, KNN bu yeni URL'yi de phishing olarak etiketleyebilir.</li>
+            <li><strong>Özellik Vektörü Benzerliği:</strong> Model, her URL'yi bir özellik vektörüne dönüştürür (örneğin, URL uzunluğu, HTTPS varlığı, alan adı yaşı, özel karakter sayısı, belirli anahtar kelimelerin varlığı/yokluğu vb.). Yeni bir URL geldiğinde, bu özellik vektörü hesaplanır ve bilinen phishing/meşru URL'lerin özellik vektörleriyle karşılaştırılır. En yakın K komşunun çoğunluğu phishing ise, yeni URL de phishing olarak sınıflandırılır.</li>
+        </ul>
+        <p><em>KNN, doğrudan kurallar oluşturmak yerine, mevcut örneklere olan "mesafe" veya "benzerlik" üzerinden karar verir. Bu nedenle, daha önce görülmemiş ancak bilinen phishing örneklerine benzeyen yeni tehditleri yakalamada esnek olabilir.</em></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Performance Comparison Modals -->
+<div class="modal fade" id="metricDetailModal" tabindex="-1" aria-labelledby="metricDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="metricDetailModalLabel"><i class="bi bi-bar-chart me-1 text-primary"></i>Değerlendirme Metrikleri</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+            <li><i class="bi bi-check-circle me-1"></i> <strong>Doğruluk (Accuracy):</strong> Genel sınıflandırma başarısı</li>
+            <li><i class="bi bi-bullseye me-1"></i> <strong>Kesinlik (Precision):</strong> Phishing olarak tahmin edilenlerin gerçekten phishing olma oranı</li>
+            <li><i class="bi bi-reception-4 me-1"></i> <strong>Duyarlılık (Recall):</strong> Gerçek phishing sitelerinin tespit edilme oranı</li>
+            <li><i class="bi bi-star-fill me-1"></i> <strong>F1 Skoru:</strong> Kesinlik ve duyarlılığın harmonik ortalaması</li>
+        </ul>
+        
+        <div class="mt-3">
+            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#metrikHesaplamaPerformance" aria-expanded="false" aria-controls="metrikHesaplamaPerformance">
+                <i class="bi bi-calculator me-1"></i> Metriklerin Hesaplanması
+            </button>
+            
+            <div class="collapse mt-2" id="metrikHesaplamaPerformance">
+                <div class="card card-body bg-light">
+                    <h6><i class="bi bi-table me-1"></i> Metriklerin Temeli: Karmaşıklık Matrisi</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th></th>
+                                    <th>Gerçekte Phishing</th>
+                                    <th>Gerçekte Normal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th class="table-primary">Phishing Tahmini</th>
+                                    <td class="table-success">Doğru Pozitif (TP)</td>
+                                    <td class="table-danger">Yanlış Pozitif (FP)</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-primary">Normal Tahmini</th>
+                                    <td class="table-danger">Yanlış Negatif (FN)</td>
+                                    <td class="table-success">Doğru Negatif (TN)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header py-1 bg-primary text-white">
+                                    <strong><i class="bi bi-check-circle me-1"></i> Doğruluk (Accuracy)</strong>
+                                </div>
+                                <div class="card-body py-2">
+                                    <p><em>Tüm tahminler içinde doğru olanların oranı</em></p>
+                                    <div class="bg-light p-2 text-center mb-2">
+                                        <code>Accuracy = (TP + TN) / (TP + TN + FP + FN)</code>
+                                    </div>
+                                    <p class="small mb-0">
+                                        <strong>Örnek:</strong> 100 URL'den 90'ı doğru sınıflandırılmışsa doğruluk %90'dır.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header py-1 bg-primary text-white">
+                                    <strong><i class="bi bi-bullseye me-1"></i> Kesinlik (Precision)</strong>
+                                </div>
+                                <div class="card-body py-2">
+                                    <p><em>Phishing olarak tahmin edilenler arasında gerçekten phishing olanların oranı</em></p>
+                                    <div class="bg-light p-2 text-center mb-2">
+                                        <code>Precision = TP / (TP + FP)</code>
+                                    </div>
+                                    <p class="small mb-0">
+                                        <strong>Örnek:</strong> 50 phishing tahmini yapıldı, bunların 45'i gerçekten phishing ise kesinlik %90'dır.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header py-1 bg-primary text-white">
+                                    <strong><i class="bi bi-reception-4 me-1"></i> Duyarlılık (Recall)</strong>
+                                </div>
+                                <div class="card-body py-2">
+                                    <p><em>Gerçek phishing web siteleri içinde tespit edilenlerin oranı</em></p>
+                                    <div class="bg-light p-2 text-center mb-2">
+                                        <code>Recall = TP / (TP + FN)</code>
+                                    </div>
+                                    <p class="small mb-0">
+                                        <strong>Örnek:</strong> 60 gerçek phishing sitesinden 54'ü tespit edilmişse duyarlılık %90'dır.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header py-1 bg-primary text-white">
+                                    <strong><i class="bi bi-star-fill me-1"></i> F1 Skoru</strong>
+                                </div>
+                                <div class="card-body py-2">
+                                    <p><em>Kesinlik ve duyarlılık arasında denge kuran harmonik ortalama</em></p>
+                                    <div class="bg-light p-2 text-center mb-2">
+                                        <code>F1 = 2 * (Precision * Recall) / (Precision + Recall)</code>
+                                    </div>
+                                    <p class="small mb-0">
+                                        <strong>Örnek:</strong> Kesinlik %85, duyarlılık %95 ise F1 skoru 2*(0.85*0.95)/(0.85+0.95) = %89.7'dir.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0">
+                                <strong><i class="bi bi-lightbulb me-1"></i> Not:</strong> Phishing tespitinde genellikle yüksek recall (duyarlılık) önemlidir, çünkü phishing sitelerini kaçırmak (yanlış negatif) kullanıcıları risk altında bırakabilir. F1 skoru, bu dengeyi göz önünde bulundurduğu için özellikle değerlidir.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="phishingOrnekDetailModal" tabindex="-1" aria-labelledby="phishingOrnekDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="phishingOrnekDetailModalLabel"><i class="bi bi-search me-1"></i>Gerçek Phishing Örnekleri ve Model Tespitleri</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Çapraz doğrulamada modeller, aşağıdaki gibi bilinen phishing URL'lerini %90+ doğrulukla tespit edebilmektedir:</p>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="alert alert-danger py-2">
+                    <code>paypa1-verification.com/secure</code>
+                    <small class="d-block mt-1"><i class="bi bi-patch-exclamation-fill me-1"></i> 1 rakamı ile PayPal taklidi</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-danger py-2">
+                    <code>facebook-login.gq/profile</code>
+                    <small class="d-block mt-1"><i class="bi bi-patch-exclamation-fill me-1"></i> Ucuz alan adı uzantısı</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-danger py-2">
+                    <code>bankofamerica.login.com.xyz</code>
+                    <small class="d-block mt-1"><i class="bi bi-patch-exclamation-fill me-1"></i> Alt alan adı manipülasyonu</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-2">
+            <h6 class="mb-2"><i class="bi bi-lightning-charge me-1"></i> Model Tespitleri</h6>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header py-1 bg-success text-white">
+                            <i class="bi bi-diagram-3 me-1"></i> Random Forest
+                        </div>
+                        <div class="card-body py-2">
+                            <p class="small mb-0">URL'deki karmaşık desenler ve alt alanadı sayısı gibi özellikleri birlikte inceleyerek en kapsamlı tespit yeteneğine sahiptir. Kesinlik ve duyarlılık dengesi en iyi olan modeldir.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header py-1 bg-danger text-white">
+                            <i class="bi bi-calculator me-1"></i> Naive Bayes
+                        </div>
+                        <div class="card-body py-2">
+                            <p class="small mb-0">Metin içeren URL'lerde "verification", "account", "secure" gibi kelime kalıplarını en iyi tespit eden modeldir, ancak karmaşık desenler konusunda daha az başarılıdır.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} 

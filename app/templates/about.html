@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Hakkında - PhishingML{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-4 border-light">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <img src="{{ url_for('static', filename='images/hande_profil.jpg') }}" alt="Hande Göktaş" class="img-fluid rounded-circle shadow" style="max-width: 200px;">
+                                </div>
+                                <h4 class="card-title text-center mb-3"><i class="bi bi-person-vcard me-2 text-primary"></i>Hande Göktaş</h4>
+                                <ul class="list-group list-group-flush mt-3">
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-success">
+                                            <i class="bi bi-bank fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Çalıştığı Kurum</strong>
+                                            <span>Yapıkredi Teknoloji</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-primary">
+                                            <i class="bi bi-award-fill fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Kıdem</strong>
+                                            <span>Kıdemli Siber Güvelik Uzmanı</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-info">
+                                            <i class="bi bi-shield-lock-fill fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Uzmanlık</strong>
+                                            <span>Güvenlik Zafiyet Yönetimi</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-primary">
+                                            <i class="bi bi-linkedin fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">LinkedIn</strong>
+                                            <a href="https://www.linkedin.com/in/hande-bozkurt-429192187/" target="_blank" class="link-primary text-decoration-none">linkedin.com/in/hande-bozkurt-429192187</a>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-danger">
+                                            <i class="bi bi-envelope-fill fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">E-posta</strong>
+                                            <a href="mailto:hande.bozkurt@ykteknoloji.com.tr" class="link-primary text-decoration-none">hande.bozkurt@ykteknoloji.com.tr</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="card-title mb-3"><i class="bi bi-person-badge me-2 text-primary"></i>Proje Künyesi</h4>
+                                <ul class="list-group list-group-flush mt-3">
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-success">
+                                            <i class="bi bi-card-heading fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Proje Başlığı</strong>
+                                            <span>Yapay Zeka Destekli Kimlik Avı (Phishing) Saldırılarının Tespiti</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-primary">
+                                            <i class="bi bi-person-fill fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Projeyi Gerçekleştiren</strong>
+                                            <span>Hande Göktaş</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-info">
+                                            <i class="bi bi-mortarboard-fill fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Proje Danışmanı</strong>
+                                            <span>Dr. Eyüp Emre Ülkü</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-warning">
+                                            <i class="bi bi-building fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Kurum</strong>
+                                            <span>Marmara Üniversitesi</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="me-3 text-danger">
+                                            <i class="bi bi-mortarboard fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block mb-1">Yüksek Lisans Programı</strong>
+                                            <span>Siber Güvenlik</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-3"><i class="bi bi-gear-fill me-2 text-primary"></i>Teknik Detaylar</h4>
+                                <p class="card-text">Bu uygulama aşağıdaki teknolojiler kullanılarak geliştirilmiştir:</p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item"><i class="bi bi-filetype-py me-2 text-success"></i>Backend: Python, Flask</li>
+                                    <li class="list-group-item"><i class="bi bi-code-slash me-2 text-info"></i>Frontend: HTML5, CSS3, JavaScript, Bootstrap 5</li>
+                                    <li class="list-group-item"><i class="bi bi-robot me-2 text-warning"></i>Makine Öğrenmesi: Scikit-Learn, Pandas, NumPy</li>
+                                    <li class="list-group-item"><i class="bi bi-hdd-fill me-2 text-danger"></i>Veritabanı: SQLite</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
